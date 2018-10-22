@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,10 +31,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        initRecyclerView();
+    }
+
+    private void initRecyclerView(){
         mLayoutManager = new GridLayoutManager(this, mColumnCount);
         mAdapter = new VideoAdapter(this);
 
         mRvVideoList.setLayoutManager(mLayoutManager);
         mRvVideoList.setAdapter(mAdapter);
+
+        //先实例化Callback
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallbackImpl(mAdapter);
+        //用Callback构造ItemTouchHelper
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        //调用ItemTouchHelper的attachToRecyclerView方法建立联系
+        touchHelper.attachToRecyclerView(mRvVideoList);
     }
 }

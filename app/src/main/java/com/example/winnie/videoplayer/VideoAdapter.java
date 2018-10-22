@@ -5,6 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -12,7 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
  * @date : 2018/10/22
  * @desc
  */
-public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements ItemTouchHelperAdapter{
     /**
      * 上下文
      */
@@ -23,8 +28,17 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      */
     private int mSelectedPos = -1;
 
+    /**
+     * 数据
+     */
+    private List<String> mData;
+
     public VideoAdapter(Context context) {
         mContext = context;
+        mData = new ArrayList<>();
+        for(int i=0; i< 4; i++){
+            mData.add("");
+        }
     }
 
     @Override
@@ -49,7 +63,21 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return 4;
+        return mData.size();
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mData, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        if(mData.size() > position) {
+            mData.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
