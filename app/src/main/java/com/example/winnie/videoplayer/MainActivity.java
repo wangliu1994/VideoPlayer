@@ -1,13 +1,39 @@
 package com.example.winnie.videoplayer;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+/**
+ * @author winnie
+ */
 public class MainActivity extends AppCompatActivity {
+
+    @BindView(R.id.rv_video_list)
+    RecyclerView mRvVideoList;
+
+    private GridLayoutManager mLayoutManager;
+    private VideoAdapter mAdapter;
+
+    /**
+     * 每行的item个数
+     */
+    private int mColumnCount = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        mLayoutManager = new GridLayoutManager(this, mColumnCount);
+        mAdapter = new VideoAdapter(this);
+
+        mRvVideoList.setLayoutManager(mLayoutManager);
+        mRvVideoList.setAdapter(mAdapter);
     }
 }
