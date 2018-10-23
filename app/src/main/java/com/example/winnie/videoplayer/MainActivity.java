@@ -1,7 +1,9 @@
 package com.example.winnie.videoplayer;
 
+import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -47,5 +49,12 @@ public class MainActivity extends AppCompatActivity {
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         //调用ItemTouchHelper的attachToRecyclerView方法建立联系
         touchHelper.attachToRecyclerView(mRvVideoList);
+    }
+
+    /**
+     * 设置状态栏颜色
+     */
+    private void setStatusBarColor(@ColorInt int color) {
+        getWindow().setStatusBarColor(color);
     }
 }

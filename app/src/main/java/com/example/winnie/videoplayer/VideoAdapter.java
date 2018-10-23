@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,8 +37,8 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public VideoAdapter(Context context) {
         mContext = context;
         mData = new ArrayList<>();
-        for(int i=0; i< 4; i++){
-            mData.add("");
+        for(int i=0; i< 6; i++){
+            mData.add("" + i);
         }
     }
 
@@ -51,6 +52,8 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ViewHolder){
             ViewHolder viewHolder = (ViewHolder) holder;
+            String data = mData.get(position);
+            viewHolder.mTvNum.setText(data);
             viewHolder.setSelected(position == mSelectedPos);
             viewHolder.mItemView.setOnClickListener(v -> {
                 if(position != mSelectedPos) {
@@ -82,10 +85,12 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private View mItemView;
+        private TextView mTvNum;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mItemView = itemView;
+            mTvNum = mItemView.findViewById(R.id.tv_num);
         }
 
         public void setSelected(boolean selected){

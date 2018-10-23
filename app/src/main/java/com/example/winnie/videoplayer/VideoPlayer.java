@@ -1,5 +1,7 @@
 package com.example.winnie.videoplayer;
 
+import android.view.SurfaceView;
+
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -11,4 +13,6 @@ public class VideoPlayer {
 
     private IjkMediaPlayer mMediaPlayer;
     private String videoPath = "http://221.228.226.5/14/z/w/y/y/zwyyobhyqvmwslabxyoaixvyubmekc/sh.yinyuetai.com/4599015ED06F94848EBF877EAAE13886.mp4";
+
+    private SurfaceView mSurfaceView;
 }

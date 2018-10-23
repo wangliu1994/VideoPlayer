@@ -1,31 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:clipChildren="false"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:padding="10dp"
         android:text="@string/app_name"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/title_text_size" />
+        android:textSize="@dimen/title_text_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_video_list"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
+        android:layout_height="390dp"
         android:layout_marginEnd="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
         tools:itemCount="4"
         tools:layoutManager="GridLayoutManager"
         tools:listitem="@layout/view_list_item"
         tools:spanCount="2" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
