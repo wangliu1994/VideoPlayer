@@ -12,24 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
     /**
-     * 普通状态
-     */
-    private static final int STATE_NORMAL = 0;
-
-    /**
-     * 向上拖拽 还没达到删除的位置 状态
-     */
-    private static final int STATE_DRAG_TOP = 1;
-
-    /**
-     * 向上拖拽 达到删除的位置 可以删除状态
-     */
-    private static final int STATE_CAN_DELETE = 2;
-
-    /**
      * 当前状态
      */
-    private int mState = STATE_NORMAL;
+    private ItemState mState = ItemState.STATE_NORMAL;
 
     /**
      * 向上拖拽超过mCanDeleteY时出现删除图标
@@ -129,13 +114,13 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
         int position = viewHolder.getLayoutPosition();
         int exeDY = (int) (dY + position / mColumnCount * itemHeight);
 
-        int state = STATE_NORMAL;
+        ItemState state = ItemState.STATE_NORMAL;
         //isCurrentlyActive为true表示手指拖动还未放开
         if (isCurrentlyActive) {
             if (Math.abs(exeDY) >= mCanDeleteY) {
-                state = STATE_CAN_DELETE;
+                state = ItemState.STATE_CAN_DELETE;
             } else if (Math.abs(exeDY) >= mDeleteY) {
-                state = STATE_DRAG_TOP;
+                state = ItemState.STATE_DRAG_TOP;
             }
         } else {
             if (Math.abs(exeDY) >= mCanDeleteY) {
