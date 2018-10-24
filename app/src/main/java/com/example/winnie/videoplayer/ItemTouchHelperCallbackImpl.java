@@ -12,17 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
     /**
-     * 没有拖拽状态
+     * 普通状态
      */
     private static final int STATE_NORMAL = 0;
 
     /**
-     * 正在向上拖拽 还没达到删除的位置
+     * 向上拖拽 还没达到删除的位置 状态
      */
     private static final int STATE_DRAG_TOP = 1;
 
     /**
-     * 可以删除
+     * 向上拖拽 达到删除的位置 可以删除状态
      */
     private static final int STATE_CAN_DELETE = 2;
 
@@ -31,10 +31,28 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
      */
     private int mState = STATE_NORMAL;
 
-    private ItemTouchHelperAdapter mAdapter;
+    /**
+     * 向上拖拽超过mCanDeleteY时出现删除图标
+     */
+    private int mCanDeleteY = ScreenUtils.dp2px(40);
 
-    public ItemTouchHelperCallbackImpl(ItemTouchHelperAdapter adapter) {
-        mAdapter = adapter;
+    /**
+     * 向上拖拽超过mDeleteY时候执行删除
+     */
+    private int mDeleteY = ScreenUtils.dp2px(20);
+
+    /**
+     * 每行item的个数
+     */
+    private int mColumnCount;
+
+    private RecyclerView.ViewHolder mTarget;
+
+    private ItemTouchCallBack mCallBack;
+
+    public ItemTouchHelperCallbackImpl(ItemTouchCallBack adapter, int columnCount) {
+        mCallBack = adapter;
+        mColumnCount = columnCount;
     }
 
     @Override
@@ -52,7 +70,9 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
      */
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-        mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        //TODO 这里不再做交换操作，只是记录操作的item，在clearView（）里面做交换操作
+        mCallBack.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        mTarget = target;
         return true;
     }
 
@@ -61,7 +81,7 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
      */
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        mCallBack.onItemRemove(viewHolder.getAdapterPosition());
     }
 
     /**
@@ -94,6 +114,9 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
+        if (mTarget != null) {
+           mCallBack.onItemMove(viewHolder.getAdapterPosition(), mTarget.getAdapterPosition());
+        }
     }
 
     /**
@@ -102,5 +125,41 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        int itemHeight = viewHolder.itemView.getHeight();
+        int position = viewHolder.getLayoutPosition();
+        int exeDy = (int) (dY + position / mColumnCount * itemHeight);
+
+        int state = STATE_NORMAL;
+        if (isCurrentlyActive) {
+            //手指拖动
+            if (exeDy < -mCanDeleteY) {
+                state = STATE_CAN_DELETE;
+            } else if (exeDy < -mDeleteY) {
+                state = STATE_DRAG_TOP;
+            }
+        } else {
+            //松手,执行删除操作
+            if (exeDy < -mCanDeleteY) {
+                mCallBack.onItemRemove(position);
+            }
+        }
+
+        if (mState == state) {
+            return;
+        }
+
+        mState = state;
+        switch (state) {
+            case STATE_DRAG_TOP:
+                mCallBack.onItemDropTop();
+                break;
+            case STATE_CAN_DELETE:
+                mCallBack.onItemCanDelete();
+                break;
+            case STATE_NORMAL:
+            default:
+                mCallBack.onItemReset();
+                break;
+        }
     }
 }

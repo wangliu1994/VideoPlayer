@@ -17,8 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @date : 2018/10/22
  * @desc
  */
-public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-        implements ItemTouchHelperAdapter{
+public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * 上下文
      */
@@ -69,18 +68,16 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return mData.size();
     }
 
-    @Override
     public void onItemMove(int fromPosition, int toPosition) {
         Collections.swap(mData, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    @Override
-    public void onItemDismiss(int position) {
-        if(mData.size() > position) {
-            mData.remove(position);
-            notifyItemRemoved(position);
-        }
+    public void onItemRemove(int position) {
+//        mData.remove(position);
+//        notifyItemRemoved(position);
+        mData.set(position, "已删除");
+        notifyItemChanged(position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
