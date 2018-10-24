@@ -127,19 +127,18 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         int itemHeight = viewHolder.itemView.getHeight();
         int position = viewHolder.getLayoutPosition();
-        int exeDy = (int) (dY + position / mColumnCount * itemHeight);
+        int exeDY = (int) (dY + position / mColumnCount * itemHeight);
 
         int state = STATE_NORMAL;
+        //isCurrentlyActive为true表示手指拖动还未放开
         if (isCurrentlyActive) {
-            //手指拖动
-            if (exeDy < -mCanDeleteY) {
+            if (Math.abs(exeDY) >= mCanDeleteY) {
                 state = STATE_CAN_DELETE;
-            } else if (exeDy < -mDeleteY) {
+            } else if (Math.abs(exeDY) >= mDeleteY) {
                 state = STATE_DRAG_TOP;
             }
         } else {
-            //松手,执行删除操作
-            if (exeDy < -mCanDeleteY) {
+            if (Math.abs(exeDY) >= mCanDeleteY) {
                 mCallBack.onItemRemove(position);
             }
         }
@@ -147,7 +146,6 @@ public class ItemTouchHelperCallbackImpl extends ItemTouchHelper.Callback {
         if (mState == state) {
             return;
         }
-
         mState = state;
         switch (state) {
             case STATE_DRAG_TOP:

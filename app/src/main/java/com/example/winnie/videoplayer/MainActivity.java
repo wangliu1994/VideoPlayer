@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity  implements ItemTouchCallBac
     /**
      * 移除窗口提示
      */
-    private ImageView mAlertView;
+    private ImageView mDelImage;
 
     private GridLayoutManager mLayoutManager;
     private VideoAdapter mAdapter;
@@ -76,20 +76,20 @@ public class MainActivity extends AppCompatActivity  implements ItemTouchCallBac
     @Override
     public void onItemCanDelete() {
         initDelImageView();
-        mAlertView.setVisibility(View.VISIBLE);
-        mAlertView.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        mDelImage.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        mDelImage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onItemDropTop() {
         initDelImageView();
-        mAlertView.setVisibility(View.VISIBLE);
-        mAlertView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        mDelImage.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        mDelImage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onItemReset() {
-        mAlertView.setVisibility(View.GONE);
+        mDelImage.setVisibility(View.GONE);
     }
 
     /**
@@ -105,25 +105,18 @@ public class MainActivity extends AppCompatActivity  implements ItemTouchCallBac
     private void initDelImageView() {
         int statusBarHeight = ScreenUtils.getStatusBarHeight();
         int tabLayoutHeight = ScreenUtils.dp2px(48);
-
-        if (mAlertView == null) {
-            mAlertView = new ImageView(this);
+        if (mDelImage == null) {
+            mDelImage = new ImageView(this);
             FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
 
-            mAlertView.setImageResource(R.drawable.vector_drawable_del);
-            mAlertView.setScaleType(ImageView.ScaleType.CENTER);
+            mDelImage.setImageResource(R.drawable.vector_drawable_del);
+            mDelImage.setScaleType(ImageView.ScaleType.CENTER);
 
             FrameLayout.LayoutParams params;
             params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     statusBarHeight + tabLayoutHeight);
-            mAlertView.setPadding(0, statusBarHeight, 0, 0);
-            decorView.addView(mAlertView, params);
-        } else {
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
-                    mAlertView.getLayoutParams();
-            params.height = statusBarHeight + tabLayoutHeight;
-            mAlertView.setPadding(0, statusBarHeight, 0, 0);
-            mAlertView.setLayoutParams(params);
+            mDelImage.setPadding(0, statusBarHeight, 0, 0);
+            decorView.addView(mDelImage, params);
         }
     }
 }
