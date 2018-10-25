@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.example.winnie.videoplayer.recycler.ItemTouchCallBack;
 import com.example.winnie.videoplayer.recycler.ItemTouchHelperCallbackImpl;
 import com.example.winnie.videoplayer.recycler.VideoAdapter;
+import com.example.winnie.videoplayer.viewgroup.DragViewGroup;
 
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,10 +22,13 @@ import butterknife.ButterKnife;
 /**
  * @author winnie
  */
-public class MainActivity extends AppCompatActivity  implements ItemTouchCallBack {
+public class MainActivity extends AppCompatActivity implements ItemTouchCallBack {
 
     @BindView(R.id.rv_video_list)
     RecyclerView mRvVideoList;
+    @BindView(R.id.dg_layout)
+    DragViewGroup mDgLayout;
+
 
     /**
      * 移除窗口提示
@@ -46,9 +50,10 @@ public class MainActivity extends AppCompatActivity  implements ItemTouchCallBac
         ButterKnife.bind(this);
 
         initRecyclerView();
+        initDragLayout();
     }
 
-    private void initRecyclerView(){
+    private void initRecyclerView() {
         mLayoutManager = new GridLayoutManager(this, mColumnCount);
         mAdapter = new VideoAdapter(this);
 
@@ -63,16 +68,20 @@ public class MainActivity extends AppCompatActivity  implements ItemTouchCallBac
         touchHelper.attachToRecyclerView(mRvVideoList);
     }
 
+    private void initDragLayout() {
+//        mDgLayout.setViewColumn(4);
+    }
+
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.onItemMove(fromPosition, toPosition);
         }
     }
 
     @Override
     public void onItemRemove(int position) {
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.onItemRemove(position);
         }
     }

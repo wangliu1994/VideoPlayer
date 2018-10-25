@@ -38,7 +38,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public VideoAdapter(Context context) {
         mContext = context;
         mData = new ArrayList<>();
-        for(int i=0; i< 6; i++){
+        for(int i=0; i< 4; i++){
             mData.add("" + i);
         }
     }
