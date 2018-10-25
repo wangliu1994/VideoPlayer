@@ -1,10 +1,12 @@
-package com.example.winnie.videoplayer;
+package com.example.winnie.videoplayer.recycler;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.winnie.videoplayer.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

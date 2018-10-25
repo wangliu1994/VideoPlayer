@@ -1,6 +1,8 @@
-package com.example.winnie.videoplayer;
+package com.example.winnie.videoplayer.recycler;
 
 import android.graphics.Canvas;
+
+import com.example.winnie.videoplayer.ScreenUtils;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;

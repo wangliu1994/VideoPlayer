@@ -1,4 +1,4 @@
-package com.example.winnie.videoplayer;
+package com.example.winnie.videoplayer.recycler;
 
 /**
  * @author : winnie

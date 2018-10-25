@@ -6,6 +6,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.example.winnie.videoplayer.recycler.ItemTouchCallBack;
+import com.example.winnie.videoplayer.recycler.ItemTouchHelperCallbackImpl;
+import com.example.winnie.videoplayer.recycler.VideoAdapter;
+
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -17,7 +21,7 @@ import butterknife.ButterKnife;
 /**
  * @author winnie
  */
-public class MainActivity extends AppCompatActivity  implements ItemTouchCallBack{
+public class MainActivity extends AppCompatActivity  implements ItemTouchCallBack {
 
     @BindView(R.id.rv_video_list)
     RecyclerView mRvVideoList;
