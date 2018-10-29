@@ -37,7 +37,8 @@
         tools:itemCount="4"
         tools:layoutManager="GridLayoutManager"
         tools:listitem="@layout/view_list_item"
-        tools:spanCount="2" />
+        tools:spanCount="2"
+        android:visibility="visible"/>
 
     <com.example.winnie.videoplayer.viewgroup.DragViewGroup
         android:id="@+id/dg_layout"
@@ -55,33 +56,77 @@
 
         <include layout="@layout/view_list_item"/>
 
-        <TextView
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#cccccc"
-            android:gravity="center"
-            android:text="我是第一个" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#cccccc"
+                android:gravity="center"
+                android:text="我是第一个" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#cccccc"
-            android:gravity="center"
-            android:text="我是第二个" />
 
-        <TextView
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#cccccc"
-            android:gravity="center"
-            android:text="我是第三个" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#cccccc"
+                android:gravity="center"
+                android:text="我是第二个" />
+        </RelativeLayout>
 
-        <TextView
+
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#cccccc"
-            android:gravity="center"
-            android:text="我是第四个" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#cccccc"
+                android:gravity="center"
+                android:text="我是第三个" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#cccccc"
+                android:gravity="center"
+                android:text="我是第四个" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#cccccc"
+                android:gravity="center"
+                android:text="我是第五个" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#cccccc"
+                android:gravity="center"
+                android:text="我是第六个" />
+        </RelativeLayout>
+
 
     </com.example.winnie.videoplayer.viewgroup.DragViewGroup>
 
