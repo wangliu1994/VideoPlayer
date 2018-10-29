@@ -92,7 +92,18 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
 
     @Override
     public void onViewRemoved(View child) {
-        if(mChildren.contains(child) && child != mCapturedView){
+        if(mChildren.contains(child)){
+            boolean isCapturedView = false;
+            Object obj = child.getTag(R.id.capture_tag);
+            if(obj != null){
+                isCapturedView = (boolean) obj;
+            }
+
+            //不变更正在拖拽的View的索引值，只更新其视图
+            if((child == mCapturedView) && isCapturedView){
+                child.setTag(R.id.capture_tag, false);
+                return;
+            }
             mChildren.remove(child);
         }
         super.onViewRemoved(child);
