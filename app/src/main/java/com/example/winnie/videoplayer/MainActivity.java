@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * @author winnie
@@ -51,6 +52,19 @@ public class MainActivity extends AppCompatActivity implements ItemTouchCallBack
 
         initRecyclerView();
         initDragLayout();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        IjkMediaPlayer.loadLibrariesOnce(null);
+//        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        IjkMediaPlayer.native_profileEnd();
     }
 
     private void initRecyclerView() {

@@ -3,6 +3,7 @@
     package="com.example.winnie.videoplayer">
 
     <application
+        android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"

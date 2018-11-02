@@ -7,10 +7,11 @@
     android:orientation="vertical"
     tools:layout_height="130dp">
 
-    <SurfaceView
+    <com.example.winnie.videoplayer.video.VideoPlayerLayout
+        android:id="@+id/video_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#44000000" />
+        android:background="#aa000000" />
 
     <ImageView
         android:id="@+id/iv_play"

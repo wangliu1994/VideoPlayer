@@ -4,15 +4,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.winnie.videoplayer.R;
+import com.example.winnie.videoplayer.video.VideoPlayerLayout;
+import com.example.winnie.videoplayer.video.VideoPlayerListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * @author : winnie
@@ -84,12 +88,59 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private View mItemView;
+        private VideoPlayerLayout mPlayerLayout;
         private TextView mTvNum;
+        private ImageView mPlayView;
+        private String mVideoPath = "http://221.228.226.5/14/z/w/y/y/zwyyobhyqvmwslabxyoaixvyubmekc/sh.yinyuetai.com/4599015ED06F94848EBF877EAAE13886.mp4";
 
         public ViewHolder(View itemView) {
             super(itemView);
             mItemView = itemView;
+            mPlayerLayout = itemView.findViewById(R.id.video_player);
             mTvNum = mItemView.findViewById(R.id.tv_num);
+            mPlayView = itemView.findViewById(R.id.iv_play);
+            mPlayView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPlayerLayout.setListener(new VideoPlayerListener() {
+                        @Override
+                        public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
+
+                        }
+
+                        @Override
+                        public void onCompletion(IMediaPlayer iMediaPlayer) {
+
+                        }
+
+                        @Override
+                        public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
+                            return false;
+                        }
+
+                        @Override
+                        public void onPrepared(IMediaPlayer iMediaPlayer) {
+                            iMediaPlayer.start();
+                        }
+
+                        @Override
+                        public void onSeekComplete(IMediaPlayer iMediaPlayer) {
+
+                        }
+
+                        @Override
+                        public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
+
+                        }
+                    });
+                    mPlayerLayout.setVideoPath(mVideoPath);
+                }
+            });
         }
 
         public void setSelected(boolean selected){
