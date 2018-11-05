@@ -57,14 +57,14 @@ public class MainActivity extends AppCompatActivity implements ItemTouchCallBack
     @Override
     protected void onStart() {
         super.onStart();
-//        IjkMediaPlayer.loadLibrariesOnce(null);
-//        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+        IjkMediaPlayer.loadLibrariesOnce(null);
+        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        IjkMediaPlayer.native_profileEnd();
+        IjkMediaPlayer.native_profileEnd();
     }
 
     private void initRecyclerView() {

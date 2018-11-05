@@ -2,6 +2,7 @@ package com.example.winnie.videoplayer.video;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -9,9 +10,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 
+import java.io.File;
 import java.io.IOException;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
 
 /**
  * @author : winnie
@@ -102,7 +105,7 @@ public class VideoPlayerLayout extends FrameLayout{
         //每次都要重新创建IMediaPlayer
         createPlayer();
         try {
-            mMediaPlayer.setDataSource(mVideoPath);
+            mMediaPlayer.setDataSource(mContext, Uri.parse(mVideoPath), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -145,6 +148,13 @@ public class VideoPlayerLayout extends FrameLayout{
         return mMediaPlayer;
     }
 
+    public boolean isPlaying(){
+        if (mMediaPlayer != null) {
+            return mMediaPlayer.isPlaying();
+        }
+        return false;
+    }
+
     public void start() {
         if (mMediaPlayer != null) {
             mMediaPlayer.start();
@@ -169,6 +179,7 @@ public class VideoPlayerLayout extends FrameLayout{
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
+        mVideoPath = "";
     }
 
 

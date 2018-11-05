@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.winnie.videoplayer.R;
@@ -66,6 +67,10 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     notifyDataSetChanged();
                 }
             });
+
+            if(data.equals("已删除") && viewHolder.isPlaying()){
+                viewHolder.stopVideo();
+            }
         }
     }
 
@@ -91,6 +96,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private VideoPlayerLayout mPlayerLayout;
         private TextView mTvNum;
         private ImageView mPlayView;
+        private ProgressBar mProgressBar;
         private String mVideoPath = "http://221.228.226.5/14/z/w/y/y/zwyyobhyqvmwslabxyoaixvyubmekc/sh.yinyuetai.com/4599015ED06F94848EBF877EAAE13886.mp4";
 
         public ViewHolder(View itemView) {
@@ -99,9 +105,12 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mPlayerLayout = itemView.findViewById(R.id.video_player);
             mTvNum = mItemView.findViewById(R.id.tv_num);
             mPlayView = itemView.findViewById(R.id.iv_play);
+            mProgressBar = itemView.findViewById(R.id.progress_bar);
             mPlayView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mPlayView.setVisibility(View.GONE);
                     mPlayerLayout.setListener(new VideoPlayerListener() {
                         @Override
                         public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
@@ -126,6 +135,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         @Override
                         public void onPrepared(IMediaPlayer iMediaPlayer) {
                             iMediaPlayer.start();
+                            mProgressBar.setVisibility(View.GONE);
                         }
 
                         @Override
@@ -145,6 +155,14 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public void setSelected(boolean selected){
             mItemView.setSelected(selected);
+        }
+
+        public boolean isPlaying(){
+            return mPlayerLayout.isPlaying();
+        }
+
+        public void stopVideo(){
+            mPlayerLayout.stop();
         }
     }
 }
