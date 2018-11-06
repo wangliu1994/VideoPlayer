@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements ViewDragDelCallBa
 
         ConstraintLayout.LayoutParams params =
                 (ConstraintLayout.LayoutParams) mDgLayout.getLayoutParams();
-        int margin = ScreenUtils.dp2px(15);
+        int margin = ScreenUtils.dp2px(7);
         params.setMargins(margin, margin, margin, margin);
         params.height = ScreenUtils.dp2px(300);
     }
