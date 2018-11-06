@@ -1,4 +1,4 @@
-package com.example.winnie.videoplayer;
+package com.winnie.videoplayer.drag;
 
 /**
  * @author : winnie

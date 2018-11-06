@@ -1,21 +1,22 @@
-package com.example.winnie.videoplayer;
+package com.winnie.videoplayer;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.example.winnie.videoplayer.recycler.ItemTouchCallBack;
-import com.example.winnie.videoplayer.recycler.ItemTouchHelperCallbackImpl;
-import com.example.winnie.videoplayer.recycler.VideoAdapter;
-import com.example.winnie.videoplayer.viewgroup.DragViewGroup;
+import com.winnie.videoplayer.drag.DragViewGroup;
+import com.winnie.videoplayer.drag.ViewDragDelCallBack;
+import com.winnie.videoplayer.video.VideoAdapter;
 
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -23,35 +24,37 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 /**
  * @author winnie
  */
-public class MainActivity extends AppCompatActivity implements ItemTouchCallBack {
-
-    @BindView(R.id.rv_video_list)
-    RecyclerView mRvVideoList;
+public class MainActivity extends AppCompatActivity implements ViewDragDelCallBack {
     @BindView(R.id.dg_layout)
     DragViewGroup mDgLayout;
+    @BindView(R.id.tv_title)
+    TextView nTvTitle;
 
+    /**
+     * 监听屏幕旋转
+     */
+    private OrientationEventListener mOrientationListener;
 
     /**
      * 移除窗口提示
      */
     private ImageView mDelImage;
 
-    private GridLayoutManager mLayoutManager;
     private VideoAdapter mAdapter;
 
     /**
      * 每行的item个数
      */
-    private int mColumnCount = 2;
+    private int mColumnCount = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        initRecyclerView();
         initDragLayout();
+        mOrientationListener = new OrientationEventListenerImpl(this);
+        mOrientationListener.enable();
     }
 
     @Override
@@ -67,23 +70,50 @@ public class MainActivity extends AppCompatActivity implements ItemTouchCallBack
         IjkMediaPlayer.native_profileEnd();
     }
 
-    private void initRecyclerView() {
-        mLayoutManager = new GridLayoutManager(this, mColumnCount);
-        mAdapter = new VideoAdapter(this);
+    @Override
+    protected void onDestroy() {
+        mOrientationListener.disable();
+        super.onDestroy();
+    }
 
-        mRvVideoList.setLayoutManager(mLayoutManager);
-        mRvVideoList.setAdapter(mAdapter);
+    @Override
+    public void onConfigurationChanged(final Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.screenWidthDp < newConfig.screenHeightDp) {
+            showPortrait();
+        } else {
+            showLandScape();
+        }
+    }
 
-        //先实例化Callback
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallbackImpl(this, mColumnCount);
-        //用Callback构造ItemTouchHelper
-        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        //调用ItemTouchHelper的attachToRecyclerView方法建立联系
-        touchHelper.attachToRecyclerView(mRvVideoList);
+    private void showPortrait() {
+        //切换竖屏
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        nTvTitle.setVisibility(View.VISIBLE);
+
+        ConstraintLayout.LayoutParams params =
+                (ConstraintLayout.LayoutParams) mDgLayout.getLayoutParams();
+        int margin = ScreenUtils.dp2px(15);
+        params.setMargins(margin, margin, margin, margin);
+        params.height = ScreenUtils.dp2px(300);
+    }
+
+    private void showLandScape() {
+        //切换横屏
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        nTvTitle.setVisibility(View.GONE);
+        ConstraintLayout.LayoutParams params =
+                (ConstraintLayout.LayoutParams) mDgLayout.getLayoutParams();
+        int margin = 0;
+        params.setMargins(margin, margin, margin, margin);
+        params.height = ConstraintLayout.LayoutParams.MATCH_PARENT;
     }
 
     private void initDragLayout() {
-//        mDgLayout.setViewColumn(4);
+        mAdapter = new VideoAdapter(this, 8);
+        mAdapter.setCountPerRow(mColumnCount);
+        mDgLayout.setAdapter(mAdapter);
+        mDgLayout.setDelCallBack(this);
     }
 
     @Override
@@ -116,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchCallBack
 
     @Override
     public void onItemReset() {
+        initDelImageView();
         mDelImage.setVisibility(View.GONE);
     }
 

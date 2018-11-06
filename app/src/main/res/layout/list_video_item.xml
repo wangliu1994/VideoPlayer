@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:layout_height="130dp">
 
-    <com.example.winnie.videoplayer.video.VideoPlayerLayout
+    <com.winnie.videoplayer.video.VideoPlayerLayout
         android:id="@+id/video_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

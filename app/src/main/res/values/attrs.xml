@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="DragViewGroup">
-        <attr name="viewColumn" format="integer" />
+        <attr name="column" format="integer" />
     </declare-styleable>
 </resources>

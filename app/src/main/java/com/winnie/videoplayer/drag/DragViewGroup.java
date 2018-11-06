@@ -1,4 +1,4 @@
-package com.example.winnie.videoplayer.viewgroup;
+package com.winnie.videoplayer.drag;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -9,11 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.winnie.videoplayer.R;
-import com.example.winnie.videoplayer.ScreenUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import com.winnie.videoplayer.R;
+import com.winnie.videoplayer.ScreenUtils;
 
 import androidx.customview.widget.ViewDragHelper;
 
@@ -24,7 +21,7 @@ import androidx.customview.widget.ViewDragHelper;
  */
 public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
     /**
-     * 每行展示的view个数
+     * 每行展示的view个数 / 列数
      */
     private int mViewColumn = 1;
 
@@ -45,14 +42,9 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
     private View mCapturedView;
     private int mCapturedLeft;
     private int mCaptureTop;
-    private int mCapturedIndex;
 
     private ViewDragHelper mDragHelper;
-
-    /**
-     * 子控件集
-     */
-    private ArrayList<View> mChildren = new ArrayList<>();
+    private ViewDragDelCallBack mDelCallBack;
 
     public DragViewGroup(Context context) {
         this(context, 1);
@@ -79,39 +71,7 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
 
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.DragViewGroup);
-        mViewColumn = ta.getInteger(R.styleable.DragViewGroup_viewColumn, 1);
-    }
-
-    @Override
-    public void onViewAdded(View child) {
-        if(!mChildren.contains(child)){
-            mChildren.add(child);
-        }
-        super.onViewAdded(child);
-    }
-
-    @Override
-    public void onViewRemoved(View child) {
-        if(mChildren.contains(child)){
-            boolean isCapturedView = false;
-            Object obj = child.getTag(R.id.capture_tag);
-            if(obj != null){
-                isCapturedView = (boolean) obj;
-            }
-
-            //不变更正在拖拽的View的索引值，只更新其视图
-            if((child == mCapturedView) && isCapturedView){
-                child.setTag(R.id.capture_tag, false);
-                return;
-            }
-            mChildren.remove(child);
-        }
-        super.onViewRemoved(child);
-    }
-
-    @Override
-    public View getChildAt(int index) {
-        return mChildren.get(index);
+        mViewColumn = ta.getInteger(R.styleable.DragViewGroup_column, 1);
     }
 
     /**
@@ -124,8 +84,8 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
         mHeight = getMeasuredHeight();
         int childWidth = mWidth / mViewColumn;
         int childHeight = mHeight / mViewColumn;
-        for (int i = 0; i < mChildren.size(); i++) {
-            View childView = mChildren.get(i);
+        for (int i = 0; i < getChildCount(); i++) {
+            View childView = getChildAt(i);
             if (mViewColumn == 1) {
                 //只能展示一个child，将第一个设置为match_parent，其余为0
                 if (i == 0) {
@@ -142,39 +102,12 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
         }
     }
 
-//    /**
-//     * 不调用 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//     * 自己来设置宽高
-//     */
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        mWidth = MeasureSpec.getSize(widthMeasureSpec);
-//        mHeight = MeasureSpec.getSize(heightMeasureSpec);
-//
-//        int childWidth = 0;
-//        int childHeight = 0;
-//        measureChildren(widthMeasureSpec, heightMeasureSpec);
-//        for (int i = 0; i < getChildCount(); i++) {
-//            View childView = getChildAt(i);
-//            if(i < mViewColumn){
-//                childWidth += childView.getMeasuredWidth() + mPaddingRight;
-//            }
-//            if(i % mViewColumn == 0){
-//                childHeight += childView.getMeasuredHeight() + mPaddingRight;
-//            }
-//        }
-//
-//        mWidth = childWidth;
-//        mHeight = childHeight;
-//        setMeasuredDimension(mWidth, mHeight);
-//    }
-
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int childWidth = (right - left) / mViewColumn;
         int childHeight = (bottom - top) / mViewColumn;
-        for (int i = 0; i < mChildren.size(); i++) {
-            View child = mChildren.get(i);
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
             child.setPadding(0, 0, mPaddingRight, mPaddingRight);
 
             if (mViewColumn == 1) {
@@ -219,42 +152,42 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
         return true;
     }
 
-    public void setViewColumn(int viewColumn) {
-        mViewColumn = viewColumn;
-        requestLayout();
-    }
-
     public void setPaddingRight(int paddingRight) {
         mPaddingRight = paddingRight;
         requestLayout();
     }
 
+    public void setAdapter(Adapter adapter) {
+        mViewColumn = adapter.getColumnCount();
+
+        removeAllViews();
+
+        int count = adapter.getItemCount();
+        for (int i = 0; i < count; i++) {
+            ViewHolder holder = adapter.createItem(this, i);
+            addView(holder.itemView);
+        }
+    }
+
+    public void setDelCallBack(ViewDragDelCallBack delCallBack) {
+        mDelCallBack = delCallBack;
+    }
+
+    public int getViewColumn() {
+        return mViewColumn;
+    }
+
     @Override
     public void onItemCaptured(View child) {
         mCapturedView = child;
-        mCapturedIndex = mChildren.indexOf(mCapturedView);
         mCapturedLeft = mCapturedView.getLeft();
         mCaptureTop = mCapturedView.getTop();
     }
 
     @Override
-    public void onItemReleased(View releasedChild, int columnIndex, int rowIndex) {
-        int left = releasedChild.getLeft();
-        int top = releasedChild.getTop();
-        int targetIndex = rowIndex * mViewColumn + columnIndex;
-
-        View target = getChildAt(targetIndex);
-        if (mCapturedView == target) {
-            itemReset(releasedChild, left, top);
-        } else {
-            itemSwap(releasedChild, left, top, target, targetIndex);
-        }
-    }
-
-    /**
-     * 元素重置，恢复初始位置
-     */
-    private void itemReset(View child, int startLeft, int startTop) {
+    public void onItemReset(View child) {
+        int startLeft = child.getLeft();
+        int startTop = child.getTop();
         ValueAnimator animator = ValueAnimator.ofFloat(1.0f);
         animator.setDuration(200);
         animator.addUpdateListener(animation -> {
@@ -264,14 +197,38 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
             child.layout(tempLeft, tempTop,
                     tempLeft + child.getWidth(), tempTop + child.getHeight());
         });
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                child.setZ(0);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
         animator.start();
+        if(mDelCallBack != null){
+            mDelCallBack.onItemReset();
+        }
     }
 
 
-    /**
-     * 元素交换位置
-     */
-    private void itemSwap(View child, int startLeft, int startTop, View target, int targetIndex) {
+    @Override
+    public void onItemSwap(View child, View target) {
+        int startLeft = child.getLeft();
+        int startTop = child.getTop();
         int targetLeft = target.getLeft();
         int targetTop = target.getTop();
 
@@ -297,8 +254,17 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                int capturedIndex = indexOfChild(child);
+                int targetIndex = indexOfChild(target);
                 //动画结束之后，交换index
-                Collections.swap(mChildren, targetIndex, mCapturedIndex);
+                removeView(child);
+                addView(child, targetIndex);
+                removeView(target);
+                addView(target, capturedIndex);
+                if(mDelCallBack != null){
+                    mDelCallBack.onItemMove(capturedIndex, targetIndex);
+                }
+                child.setZ(0);
             }
 
             @Override
@@ -312,5 +278,72 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
             }
         });
         animator.start();
+        if(mDelCallBack != null){
+            mDelCallBack.onItemReset();
+        }
     }
+
+    @Override
+    public void onItemRemove(int position) {
+        if(mDelCallBack != null){
+            mDelCallBack.onItemRemove(position);
+        }
+        onItemReset(mCapturedView);
+    }
+
+    @Override
+    public void onItemCanDelete() {
+        if(mDelCallBack != null){
+            mDelCallBack.onItemCanDelete();
+        }
+    }
+
+    @Override
+    public void onItemDropTop() {
+        if(mDelCallBack != null){
+            mDelCallBack.onItemDropTop();
+        }
+    }
+
+    public static abstract class Adapter<T extends ViewHolder> {
+
+        /**
+         * 获取行数
+         */
+        public abstract int getColumnCount();
+
+        /**
+         * 获取item总数
+         */
+        public abstract int getItemCount();
+
+        /**
+         * 设置每行的item个数
+         */
+        public abstract void setCountPerRow(int countPerRow);
+
+        /**
+         * 构建布局
+         */
+        public abstract T createItem(ViewGroup parent, int position);
+
+        /**
+         * 交换
+         */
+        public abstract void onItemMove(int fromPosition, int toPosition);
+
+        /**
+         * 移除
+         */
+        public abstract void onItemRemove(int position);
+    }
+
+    public static class ViewHolder {
+        protected View itemView;
+
+        public ViewHolder(View itemView) {
+            this.itemView = itemView;
+        }
+    }
+
 }

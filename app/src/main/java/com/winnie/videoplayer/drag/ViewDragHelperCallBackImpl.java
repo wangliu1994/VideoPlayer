@@ -1,23 +1,39 @@
-package com.example.winnie.videoplayer.viewgroup;
+package com.winnie.videoplayer.drag;
 
 import android.view.View;
 
-import com.example.winnie.videoplayer.R;
+import com.winnie.videoplayer.ScreenUtils;
 
 import androidx.customview.widget.ViewDragHelper;
 
 /**
  * @author : winnie
- * @date : 2018/10/24
+ * @date : 2018/11/6
  * @desc
  */
 public class ViewDragHelperCallBackImpl extends ViewDragHelper.Callback {
-    private DragViewGroup mParent;
-    private ViewDragCallBack mCallBack;
+    /**
+     * 当前状态
+     */
+    private ItemState mState = ItemState.STATE_NORMAL;
 
-    public ViewDragHelperCallBackImpl(DragViewGroup parent, ViewDragCallBack callBack) {
+    /**
+     * 向上拖拽超过mCanDeleteY时出现删除图标
+     */
+    private int mCanDeleteY = ScreenUtils.dp2px(40);
+
+    /**
+     * 向上拖拽超过mDeleteY时候执行删除
+     */
+    private int mDeleteY = ScreenUtils.dp2px(5);
+
+    private DragViewGroup mParent;
+    private ViewDragCallBack mDragCallBack;
+    private int mCapturedIndex;
+
+    public ViewDragHelperCallBackImpl(DragViewGroup parent, ViewDragCallBack dragCallBack) {
         mParent = parent;
-        mCallBack = callBack;
+        mDragCallBack = dragCallBack;
     }
 
     /**
@@ -31,12 +47,11 @@ public class ViewDragHelperCallBackImpl extends ViewDragHelper.Callback {
 
     @Override
     public void onViewCaptured(View capturedChild, int activePointerId) {
-        mCallBack.onItemCaptured(capturedChild);
-        //移除之后重新添加，是为了让当前拖动的View能够在视图最顶层
-        capturedChild.setTag(R.id.capture_tag, true);
-        mParent.removeView(capturedChild);
-        mParent.addView(capturedChild);
+        mCapturedIndex = mParent.indexOfChild(capturedChild);
+        //改变Z轴的坐标实现，将View移动到顶层
+        capturedChild.setZ(1);
 
+        mDragCallBack.onItemCaptured(capturedChild);
     }
 
 
@@ -63,12 +78,28 @@ public class ViewDragHelperCallBackImpl extends ViewDragHelper.Callback {
      */
     @Override
     public int clampViewPositionVertical(View child, int top, int dy) {
-        if (top < mParent.getPaddingTop()) {
-            return mParent.getPaddingTop();
+        ItemState state = ItemState.STATE_NORMAL;
+        if (top < mDeleteY) {
+            state = ItemState.STATE_CAN_DELETE;
+        }else if(top < mCanDeleteY){
+            state = ItemState.STATE_DRAG_TOP;
         }
 
-        if (top > mParent.getHeight() - child.getHeight()) {
-            return mParent.getHeight() - child.getHeight();
+        if (mState == state) {
+            return top;
+        }
+
+        mState = state;
+        switch (state) {
+            case STATE_DRAG_TOP:
+                mDragCallBack.onItemDropTop();
+                break;
+            case STATE_CAN_DELETE:
+                mDragCallBack.onItemCanDelete();
+                break;
+            case STATE_NORMAL:
+            default:
+                break;
         }
 
         return top;
@@ -117,7 +148,20 @@ public class ViewDragHelperCallBackImpl extends ViewDragHelper.Callback {
             rowIndex = 0;
         }
 
-        mCallBack.onItemReleased(releasedChild, columnIndex, rowIndex);
+        if(mState == ItemState.STATE_CAN_DELETE){
+            mDragCallBack.onItemRemove(mCapturedIndex);
+        }else {
+            int targetIndex = rowIndex * mParent.getViewColumn() + columnIndex;
+            targetIndex = Math.min(targetIndex, mParent.getChildCount() -1);
+            targetIndex = Math.max(targetIndex, 0);
+
+            View target = mParent.getChildAt(targetIndex);
+            if (targetIndex == mCapturedIndex) {
+                mDragCallBack.onItemReset(releasedChild);
+            } else {
+                mDragCallBack.onItemSwap(releasedChild,target);
+            }
+        }
     }
 
     /**

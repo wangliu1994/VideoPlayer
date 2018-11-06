@@ -1,4 +1,4 @@
-package com.example.winnie.videoplayer.video;
+package com.winnie.videoplayer.video;
 
 import android.content.Context;
 import android.net.Uri;
@@ -94,7 +94,7 @@ public class VideoPlayerLayout extends FrameLayout{
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-
+            release();
         }
     }
 

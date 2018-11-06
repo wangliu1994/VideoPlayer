@@ -1,4 +1,4 @@
-package com.example.winnie.videoplayer.video;
+package com.winnie.videoplayer.video;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 

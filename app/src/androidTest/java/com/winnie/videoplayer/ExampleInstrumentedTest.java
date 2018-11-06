@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.winnie.videoplayer", appContext.getPackageName());
+        assertEquals("com.winnie.videoplayer", appContext.getPackageName());
     }
 }
