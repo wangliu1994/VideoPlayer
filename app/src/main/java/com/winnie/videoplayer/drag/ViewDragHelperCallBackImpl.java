@@ -162,6 +162,7 @@ public class ViewDragHelperCallBackImpl extends ViewDragHelper.Callback {
                 mDragCallBack.onItemSwap(releasedChild,target);
             }
         }
+        mState = ItemState.STATE_NORMAL;
     }
 
     /**

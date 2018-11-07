@@ -1,6 +1,9 @@
 package com.winnie.videoplayer.video;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
@@ -179,6 +182,15 @@ public class VideoPlayerLayout extends FrameLayout{
     public void stop() {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
+        }
+        if(mSurfaceView != null) {
+            SurfaceHolder holder = mSurfaceView.getHolder();
+            // 创建画布
+            Canvas can = holder.lockCanvas();
+            // 设置画布颜色
+            can.drawColor(Color.LTGRAY, PorterDuff.Mode.CLEAR);
+            // 覆盖之前的画布画完你的图形后锁定画布
+            holder.unlockCanvasAndPost(can);
         }
         mVideoPath = "";
     }

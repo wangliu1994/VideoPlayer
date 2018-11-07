@@ -123,8 +123,9 @@ public class VideoAdapter extends DragViewGroup.Adapter<DragViewGroup.ViewHolder
             VideoViewHolder viewHolder = (VideoViewHolder) holder;
             viewHolder.mTvNum.setText(data);
             viewHolder.setSelected(position == mSelectedPos);
-            if (data.equals("已删除") && viewHolder.isPlaying()) {
+            if (data.equals("已删除")) {
                 viewHolder.stopVideo();
+                viewHolder.mTvNum.setText("已停止");
             }
 //            viewHolder.mItemView.setOnClickListener(v -> {
 //                if (position != mSelectedPos) {
@@ -165,46 +166,16 @@ public class VideoAdapter extends DragViewGroup.Adapter<DragViewGroup.ViewHolder
             mPlayView = itemView.findViewById(R.id.iv_play);
             mProgressBar = itemView.findViewById(R.id.progress_bar);
             mPlayView.setOnClickListener(v -> {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mPlayView.setVisibility(View.GONE);
-                mPlayerLayout.setListener(new VideoPlayerListener() {
-                    @Override
-                    public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
-
-                    }
-
-                    @Override
-                    public void onCompletion(IMediaPlayer iMediaPlayer) {
-
-                    }
-
-                    @Override
-                    public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
-                        return false;
-                    }
-
-                    @Override
-                    public void onPrepared(IMediaPlayer iMediaPlayer) {
-                        iMediaPlayer.start();
-                        mProgressBar.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onSeekComplete(IMediaPlayer iMediaPlayer) {
-
-                    }
-
-                    @Override
-                    public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
-
-                    }
-                });
-                mPlayerLayout.setVideoPath(mVideoPath);
+                if(mPlayerLayout.getMediaPlayer() == null){
+                    startVideo();
+                    mPlayView.setBackgroundResource(R.drawable.vector_drawable_pause);
+                } else if (isPlaying()) {
+                    pauseVideo();
+                    mPlayView.setBackgroundResource(R.drawable.vector_drawable_play);
+                } else {
+                    playVideo();
+                    mPlayView.setBackgroundResource(R.drawable.vector_drawable_pause);
+                }
             });
         }
 
@@ -216,8 +187,63 @@ public class VideoAdapter extends DragViewGroup.Adapter<DragViewGroup.ViewHolder
             return mPlayerLayout.isPlaying();
         }
 
+        public void startVideo(){
+            mProgressBar.setVisibility(View.VISIBLE);
+            mPlayView.setVisibility(View.GONE);
+            mPlayerLayout.setListener(new VideoPlayerListener() {
+                @Override
+                public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
+
+                }
+
+                @Override
+                public void onCompletion(IMediaPlayer iMediaPlayer) {
+
+                }
+
+                @Override
+                public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+                    return false;
+                }
+
+                @Override
+                public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
+                    return false;
+                }
+
+                @Override
+                public void onPrepared(IMediaPlayer iMediaPlayer) {
+                    iMediaPlayer.start();
+                    mProgressBar.setVisibility(View.GONE);
+                    mPlayView.setVisibility(View.VISIBLE);
+                    mTvNum.setText("播放中");
+                }
+
+                @Override
+                public void onSeekComplete(IMediaPlayer iMediaPlayer) {
+
+                }
+
+                @Override
+                public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
+
+                }
+            });
+            mPlayerLayout.setVideoPath(mVideoPath);
+        }
+
+        public void playVideo(){
+            mPlayerLayout.start();
+        }
+
+        public void pauseVideo(){
+            mPlayerLayout.pause();
+        }
+
         public void stopVideo() {
+            mPlayerLayout.stop();
             mPlayerLayout.release();
+            mPlayView.setBackgroundResource(R.drawable.vector_drawable_play);
         }
     }
 
