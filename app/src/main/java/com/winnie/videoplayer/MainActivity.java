@@ -6,6 +6,7 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements ViewDragDelCallBa
     DragViewGroup mDgLayout;
     @BindView(R.id.tv_title)
     TextView nTvTitle;
+    @BindView(R.id.et_video_column)
+    EditText mEtVideoColumn;
 
     /**
      * 监听屏幕旋转
@@ -110,7 +114,11 @@ public class MainActivity extends AppCompatActivity implements ViewDragDelCallBa
     }
 
     private void initDragLayout() {
-        mAdapter = new VideoAdapter(this, 8);
+        int windowCount = mColumnCount * mColumnCount;
+        if(mColumnCount > 1){
+            windowCount = windowCount -1;
+        }
+        mAdapter = new VideoAdapter(this, windowCount);
         mAdapter.setCountPerRow(mColumnCount);
         mDgLayout.setAdapter(mAdapter);
         mDgLayout.setDelCallBack(this);
@@ -175,6 +183,16 @@ public class MainActivity extends AppCompatActivity implements ViewDragDelCallBa
                     statusBarHeight + tabLayoutHeight);
             mDelImage.setPadding(0, statusBarHeight, 0, 0);
             decorView.addView(mDelImage, params);
+        }
+    }
+
+    @OnClick(R.id.video_change_column)
+    public void onViewClicked() {
+        int num = StringUtils.parseInt(mEtVideoColumn.getText().toString());
+        if(num != mColumnCount){
+            num = Math.max(1, Math.min(5, num));
+            mColumnCount = num;
+            initDragLayout();
         }
     }
 }

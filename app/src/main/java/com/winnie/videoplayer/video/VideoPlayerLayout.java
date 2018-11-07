@@ -130,6 +130,7 @@ public class VideoPlayerLayout extends FrameLayout{
         mMediaPlayer = ijkMediaPlayer;
         if(mListener != null){
             mMediaPlayer.setOnPreparedListener(mListener);
+            mMediaPlayer.setOnCompletionListener(mListener);
             mMediaPlayer.setOnInfoListener(mListener);
             mMediaPlayer.setOnSeekCompleteListener(mListener);
             mMediaPlayer.setOnBufferingUpdateListener(mListener);

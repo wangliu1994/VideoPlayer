@@ -34,7 +34,7 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
     /**
      * 边距
      */
-    private int mPaddingRight;
+    private int mPadding;
 
     /**
      * 拖拽的元素
@@ -61,7 +61,7 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
     public DragViewGroup(Context context, AttributeSet attrs, int viewColumn) {
         super(context, attrs);
         mViewColumn = viewColumn;
-        mPaddingRight = ScreenUtils.dp2px(context, 5);
+        mPadding = ScreenUtils.dp2px(context, 1);
         mDragHelper = ViewDragHelper.create(this, 1.0f,
                 new ViewDragHelperCallBackImpl(this, this));
         if (attrs != null) {
@@ -108,7 +108,7 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
         int childHeight = (bottom - top) / mViewColumn;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            child.setPadding(0, 0, mPaddingRight, mPaddingRight);
+            child.setPadding(mPadding, mPadding, mPadding, mPadding);
 
             if (mViewColumn == 1) {
                 child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
@@ -152,8 +152,8 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
         return true;
     }
 
-    public void setPaddingRight(int paddingRight) {
-        mPaddingRight = paddingRight;
+    public void setPadding(int padding) {
+        mPadding = padding;
         requestLayout();
     }
 

@@ -73,7 +73,7 @@ public class VideoAdapter extends DragViewGroup.Adapter<DragViewGroup.ViewHolder
 
     @Override
     public DragViewGroup.ViewHolder createItem(ViewGroup parent, int position) {
-        if(position % mPerRowCount == 1){
+        if(position % 2 == 1){
             View view = LayoutInflater.from(mContext).inflate(
                     R.layout.list_normal_item, parent, false);
             NormalViewHolder holder = new NormalViewHolder(view);
