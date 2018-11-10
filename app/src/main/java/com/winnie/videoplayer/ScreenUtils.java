@@ -198,6 +198,8 @@ public class ScreenUtils {
 
     /**
      * dp转换成px
+     * +0.5的作用是为了适用于程序中的四舍五入
+     * 例如5.6f在java中转换成int类型的话是5，所以加上0.5从而变成6，提高了精度。
      */
     public static int dp2px(float dpValue) {
         Resources resources = Resources.getSystem();
