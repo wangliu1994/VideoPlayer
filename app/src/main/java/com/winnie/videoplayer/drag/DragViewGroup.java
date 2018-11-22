@@ -72,6 +72,7 @@ public class DragViewGroup extends ViewGroup implements ViewDragCallBack {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.DragViewGroup);
         mViewColumn = ta.getInteger(R.styleable.DragViewGroup_column, 1);
+        ta.recycle();
     }
 
     /**
